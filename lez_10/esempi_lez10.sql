@@ -131,6 +131,50 @@ where country = 'USA'
 
 
 
+--es4
+--selezionare le pellicole prodotte solo in italia
+--solo in italia significa che esiste un record del movie con country = ita e non ci sono record del movie con country <> ita
+--sottrazione
+
+select movie
+from imdb.produced
+where country = 'ITA'
+
+except 
+
+select movie
+from imdb.produced
+where country <> 'ITA';
+
+--soluzione con join ha un problema e la riguardiamo
+select *
+from imdb.produced pita left join imdb.produced npita on pita.movie = npita.movie 
+where pita.country = 'ITA' and npita.country <> 'ITA' 
+and npita.movie is null;
+
+
+
+--es5
+--selezionare i film che hanno materiali multimediali o testuali
+-- servono tabella material (id, description, lenguage, movie) text(material, content) multimedia(material, url, runtime, resolution, type)
+select distinct movie
+from imdb.material left join imdb.text on material.id = text.material left join 
+imdb.multimedia on material.id = multimedia.material
+where text.material is not null or multimedia.material is not null;
+
+--soluzione con union
+select movie
+from imdb.material inner join imdb.text on material.id = text.material
+
+union
+
+select movie
+from imdb.material inner join imdb.multimedia on material.id = multimedia.material;
+
+
+
+
+
 
 
 
