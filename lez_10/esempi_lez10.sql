@@ -33,6 +33,8 @@ from imdb.location lbirth inner join imdb.location ldeath on lbirth.person =
 ldeath.person and lbirth.country <> ldeath.country inner join imdb.person on imdb.person.id = lbirth.person 
 where lbirth.d_role = 'B' and ldeath.d_role = 'D';
 
+
+
 --es2
 --selezionare i film che non hanno materiali associati
 --uso outer join
@@ -62,10 +64,70 @@ except
 select distinct movie.id, official_title 
 from imdb.movie inner join imdb.material on movie.id = material.movie; 
 
+--soluzione con query nidificata
+--soluzione corretta, ma meno elegante ed intelligente
+select id, official_title
+from imdb.movie
+where (select distinct movie from imdb.material);
 
 
 
+--es3
+-- selezionare le pellicole prodotte in Italia e in USA
+select pit.movie 
+from imdb.produced pit inner join imdb.produced pus on pit.movie = pus.movie 
+where pit.country = 'ITA' and pus.country = 'USA';
 
+--suppongo di non conoscere il codice dei paesi
+select pit.movie, pit.country, cit.name , pus.country, cus.name 
+from imdb.country cit inner join imdb.produced pit on cit.iso3 = pit.country inner join 
+imdb.produced pus on pit.movie = pus.movie inner join imdb.country cus on pus.country = cus.iso3  
+where cit.name = 'Italy' and cus.name = 'United States';
+
+--soluzione creando una vista
+create or replace view imdb.p_country as (
+select movie, name as c_name
+from imdb.country inner join imdb.produced on country.iso3 = produced.country
+);
+
+select pit.movie
+from imdb.p_country pit inner join imdb.p_country pus on pit.movie = pus.movie
+where pit.c_name = 'Italy' and pus.c_name = 'United States';
+
+--soluzione con due query: intersezione che in sql viene fatta con l'operatore intersect
+select movie
+from imdb.produced
+where country = 'ITA'
+
+intersect
+
+select movie
+from imdb.produced
+where country = 'USA';
+
+--supponendo di usare la vista e intersect
+
+select movie
+from imdb.p_country
+where c_name = 'Italy'
+
+intersect 
+
+select movie
+from imdb.p_country 
+where c_name = 'United States';
+
+
+--versione con nidificata: NB questa versione è inefficiente
+select movie
+from imdb.produced 
+where country = 'ITA' and
+movie in 
+(
+select movie
+from imdb.produced
+where country = 'USA'
+);
 
 
 
