@@ -171,6 +171,12 @@ union
 select movie
 from imdb.material inner join imdb.multimedia on material.id = multimedia.material;
 
+-- union all restituisce due volte i record che appartengono alla query A e alla query B
+-- union restituisce i record di A U B e i record nell'intersezione compaiono una volta sola
+
+-- da fare:
+-- lo stesso esercizio con l'or esclusivo
+
 
 
 
