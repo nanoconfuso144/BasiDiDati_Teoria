@@ -146,11 +146,32 @@ select movie
 from imdb.produced
 where country <> 'ITA';
 
---soluzione con join ha un problema e la riguardiamo
-select *
+--soluzione con join
+
+--questa è la prima versione errata (spiegato a lezione perchè)
+select pita.movie 
 from imdb.produced pita left join imdb.produced npita on pita.movie = npita.movie 
-where pita.country = 'ITA' and npita.country <> 'ITA' 
-and npita.movie is null;
+where pita.country = 'ITA' and npita.country <> 'ITA' and npita.movie is null;
+
+--versione corretta
+select pita.movie 
+from imdb.produced pita left join imdb.produced npita on pita.movie = npita.movie and npita.country <> 'ITA' 
+where pita.country = 'ITA' and npita.movie is null;
+
+--versione corretta con costrutto with
+with ita_movies as (
+select movie
+from imdb.produced
+where country  = 'ITA'
+), 
+nonita_movies as (
+select movie
+from imdb.produced
+where country  <> 'ITA'
+)
+select ita_movies.movie
+from ita_movies left join nonita_movies on ita_movies.movie = nonita_movies.movie
+where nonita_movies.movie is null;
 
 
 
@@ -176,17 +197,42 @@ from imdb.material inner join imdb.multimedia on material.id = multimedia.materi
 
 -- da fare:
 -- lo stesso esercizio con l'or esclusivo
+(select movie
+from imdb.material inner join imdb.text on material.id = text.material
+union
+select movie
+from imdb.material inner join imdb.multimedia on material.id = multimedia.material)
 
+except 
 
+(select movie
+from imdb.material inner join imdb.text on material.id = text.material
+intersect 
+select movie
+from imdb.material inner join imdb.multimedia on material.id = multimedia.material);
 
+--soluzione con costrutto with
+-- with serve a creare CTE: Common Table Expressions
+-- le CTE sono un modo per scrivere più chiaramente query complesse
 
+with movie_union as (
+select movie
+from imdb.material inner join imdb.text on material.id = text.material
+union
+select movie
+from imdb.material inner join imdb.multimedia on material.id = multimedia.material),
+movie_intersect as (
+select movie
+from imdb.material inner join imdb.text on material.id = text.material
+intersect 
+select movie
+from imdb.material inner join imdb.multimedia on material.id = multimedia.material)
 
-
-
-
-
-
-
+select movie 
+from movie_union
+except
+select movie 
+from movie_intersect;
 
 
 
