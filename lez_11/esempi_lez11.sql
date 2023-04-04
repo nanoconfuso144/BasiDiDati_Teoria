@@ -128,11 +128,36 @@ from imdb.movie
 where year>='2012'
 group by year --permette il raggruppamento dei record nella from
 order by year;
+--ordinare per numerosità
+select year, count(*) as "numero pellicole per anno x" --la count è applicata su ciascun gruppo
+from imdb.movie
+where year>='2012'
+group by year --permette il raggruppamento dei record nella from
+order by 2 desc; -- 2 indica la seconda colonna del risultato
+
+--restituire la durata media delle pellicole per ogni anno
+select year, avg(length) as "durata media"
+from imdb.movie
+group by year
+order by year;
+
+--restituire la numerosità di persone per ruolo
+select p_role as "ruolo", count(*) as "numero persone nel ruolo" 
+from imdb.crew
+group by p_role;
 
 
+--restituire pre ciascun film, le persone in ciascun ruolo
+--questo restituisce quante persone hanno lavorato a un film in qualsiasi ruolo
+select movie, count(*)
+from imdb.crew
+group by movie;
 
-
-
+--così è corretto
+select movie, p_role as "ruolo", count(*)
+from imdb.crew
+group by movie, p_role
+order by movie;
 
 
 
