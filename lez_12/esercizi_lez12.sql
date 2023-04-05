@@ -49,6 +49,19 @@ from imdb.crew right join imdb.person on person.id = crew.person and p_role = 'a
 group by person.id, given_name --è fondamentale in generale raggruppare anche per l'identificatore. in questo caso se raggruppassi solo su given_name, casi di omonimia verreggero contati nello stesso gruppo
 order by 2;
 
+--altra soluzione con with
+with actors as (
+select distinct person, movie
+from imdb.crew
+where p_role = 'actor'
+)
+select given_name, count(movie)
+from imdb.person left join actors on person.id = actors.person
+group by person.id, given_name
+order by 2;
+
+
+
 --restituire le persone che recitano in più di 3 pellicole
 select given_name, count(movie) 
 from imdb.crew right join imdb.person on person.id = crew.person and p_role = 'actor'
@@ -66,6 +79,58 @@ select given_name, recitazioni
 from movie_by_person
 where recitazioni>3
 order by 2;
+
+--restituire i film con cast più ampio di 10 attori
+select movie, count(person)
+from imdb.crew
+where p_role='actor'
+group by movie 
+having count(person)>10
+order by 2;
+
+--restituire le persone che non hanno mai recitato in un film (da fare a casa)
+
+--restituire le persone che hanno svolto più di un ruolo (anche nel medesimo film)
+select person, count(distinct p_role)
+from imdb.crew
+group by person
+having count(distinct p_role)>1
+order by 2; 
+
+--restituire le persone che hanno svolto più di un ruolo in film diversi
+select person, count(distinct p_role)
+from imdb.crew
+group by perso
+having count(distinct movie)>1 and count(distinct p_role)>1
+order by 2; 
+--si può fare con self join
+
+--l'attore che ha recitato nel magior numero di film
+with count_actors as (
+select person, count(movie) as recitazioni
+from imdb.crew
+where p_role = 'actor'
+group by person 
+)
+select person, count(movie)
+from imdb.crew
+where p_role = 'actor'
+group by person 
+having count(movie) = (select max(recitazioni) from count_actors);
+
+--senza with, un po' bruttina
+select person, count(movie)
+from imdb.crew
+where p_role='actor'
+group by person
+having count(movie) >= all (select count(movie)
+from imdb.crew
+where p_role = 'actor'
+group by person);
+
+
+
+
 
 
 
