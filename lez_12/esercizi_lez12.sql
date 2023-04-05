@@ -128,7 +128,20 @@ from imdb.crew
 where p_role = 'actor'
 group by person);
 
-
+--i film con cast(attori) più numeroso della media
+with movie_conteggi as( --per ogni film il numero di attori
+select movie, count(person) as conteggio
+from imdb.crew
+where p_role = 'actor'
+group by movie
+), movie_avg as ( -- valore medio di attori
+select avg(conteggio) as media
+from movie_conteggi
+)
+select movie, conteggio, media
+from movie_conteggi inner join movie_avg on movie_conteggi.conteggio > movie_avg.media
+where conteggio > (select media from movie_avg)
+order by conteggio desc;
 
 
 
