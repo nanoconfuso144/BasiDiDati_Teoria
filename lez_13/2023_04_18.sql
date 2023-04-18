@@ -66,7 +66,35 @@ where not exists (
 -- in algebra relazionale: A(R) e B(S) Con S sottoinsieme di attributi proprio di R. Nella divisione A/B kil risultato è definito rugli attributi di R-S
 -- pi_{movie,country}(released)/ro_{country<-iso3}(pi_{iso3}(country)) NB bisogna rinominare iso3
 
+select id, official_title
+from imdb.movie m
+where not exists (
+	select * 
+	from imdb.country c
+	where not exists (
+		select * 
+		from imdb.released r 
+		where m.id = r.movie and c.iso3 = r.country
+	)
+);
 
+-- selezionare le persone che hanno recitato in tutti i film di genere Crime
+-- Algebra relazionale:
+-- A/B
+--B = pi_{movie}(sigma_{genere='Crime'}(GENERE))
+--A = pi_{person,movie}(sigma_{p_role='Actor'}(CREW))
+
+select person
+from imdb.crew c 
+where not exists (
+	select * 
+	from imdb.genre g
+	where g.genre = 'Crime' and not exists (
+		select *
+		from imdb.crew c1 
+		where c1.movie = g.movie and c1.person = c.person
+	)
+);
 
 
 
