@@ -84,15 +84,15 @@ where not exists (
 --B = pi_{movie}(sigma_{genere='Crime'}(GENERE))
 --A = pi_{person,movie}(sigma_{p_role='Actor'}(CREW))
 
-select person
-from imdb.crew c 
+select p.id, p.given_name 
+from imdb.person p 
 where not exists (
 	select * 
 	from imdb.genre g
 	where g.genre = 'Crime' and not exists (
 		select *
-		from imdb.crew c1 
-		where c1.movie = g.movie and c1.person = c.person
+		from imdb.crew c
+		where c.p_role = 'actor' and c.movie = g.movie  and c.person = p.id
 	)
 );
 
