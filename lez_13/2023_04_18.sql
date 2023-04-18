@@ -18,8 +18,12 @@ from imdb.movie m
 where not exists (
 select *
 from imdb.produced p 
-where m.id = p.movie and not exists ( 
+where m.id = p.movie and exists ( 
 select *
 from imdb.released r
 where p.movie = r.movie and p.country = r.country
 ));
+-- queste query vendono dette query correlate: query nidificate in cui gli alias delle relazioni vengono utiliziate in query diverse
+
+
+
