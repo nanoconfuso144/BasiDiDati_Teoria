@@ -40,3 +40,36 @@ where not exists (
 	)
 );
 
+--titoli dei film che hanno almeno una valutazine superiore alla media delle valutazioni dei film prodotti nel medesimo anno
+select distinct id, official_title
+from imdb.movie m inner join imdb.rating on m.id = rating.movie
+where score > (	
+	select avg(score)
+	from imdb.rating inner join imdb.movie msub on rating.movie = msub.id
+	where m.year = msub.year
+);
+
+--altro es
+select distinct id, official_title
+from imdb.movie m 
+where not exists (
+	select *
+	from imdb.rating r
+	where r.movie = m.id and score <= (	
+		select avg(score)
+		from imdb.rating inner join imdb.movie msub on rating.movie = msub.id
+		where m.year = msub.year
+));
+
+
+-- selezionare i film che sono stati distribuiti in tutti i paesi
+-- in algebra relazionale: A(R) e B(S) Con S sottoinsieme di attributi proprio di R. Nella divisione A/B kil risultato è definito rugli attributi di R-S
+-- pi_{movie,country}(released)/ro_{country<-iso3}(pi_{iso3}(country)) NB bisogna rinominare iso3
+
+
+
+
+
+
+
+
