@@ -25,5 +25,18 @@ where p.movie = r.movie and p.country = r.country
 ));
 -- queste query vendono dette query correlate: query nidificate in cui gli alias delle relazioni vengono utiliziate in query diverse
 
-
+--selezionare i film nei cui cast non ci sono attori nati nei paesi dove il film è stato prodotto
+--un film appartine al risultato se non esiste un attore di quel film nato in un paese dove il film è stato prodotto
+--un film appartine al risultato se non esiste un attore di quel film per il quale esiste un record di location dove il paese di nascita corrisponde a un paese di produzione del film
+select id, official_title
+from imdb.movie m
+where not exists (
+	select *
+	from imdb.crew c inner join imdb.produced p on c.movie = p.movie
+	where c.movie = m.id and c.p_role = 'actor' and exists ( 
+		select *
+		from imdb."location" l 
+		where c.person = l.person and l.d_role ='B' and l.country = p.country 
+	)
+);
 
