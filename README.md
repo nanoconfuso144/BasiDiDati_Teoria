@@ -9,3 +9,4 @@ DA recuperare
 ## Lezione 15
 
 Dalla lezione 15 parte la progettazione di una base di dati.
+Modello ER
