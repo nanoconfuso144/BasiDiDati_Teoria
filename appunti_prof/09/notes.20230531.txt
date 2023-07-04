@@ -1,0 +1,82 @@
+-- autenticazione degli utenti. Creazione di utenze
+create user my_user_imdb with password = 'my_psw' LOGIN CREATEDB;
+
+
+
+-- azioni: insert, delete, update, select
+
+-- oggetti: relazioni (tabelle, viste), attributi (colonne)
+
+-- per consentire l'accesso a sottoinsiemi di dati di una relazione è possibile creare una vista e concedere privilegi opportuni sulla vista
+create view imdb.my_movie_2010 as (
+select id, official_title from imdb.movie where year = '2010');
+
+select * from mdb.my_movie_2010;
+
+-- consideriamo il seguente scenario e analizziamo le diverse tipologie di utenza che sono necessarie
+-- l'applicazione web deve accedere al database imdb e concedere l'inserimento di nuovi film solo alle utente di tipo admin
+-- l'applicazione web deve permettere la lettura dei dati della tabella movie a tutte le utenze (admin, operator)
+
+-- l'app ha un utente admin che si chiama john
+-- l'app ha un utente admin che si chiama bob
+-- l'app ha un utente operator che si chiama alfred
+
+create imdb.appuser (
+username varchar PRIMARY KEY,
+password varchar,
+user_type varchar CHECK (user_type in ('admin', 'operator'))
+);
+
+insert into imdb.appuser values ('john', md5('john'), 'admin');
+...
+
+-- tipologie di utenza:
+-A utenza del DB (tabella imdb.appuser)
+-B utenza del DBMS (utenze dell'installazione postgres dove imdb è memorizzato)
+
+-- definisco nel DBMS uno user per ogni tipologia di utenza dell'app
+-- comandi eseguiti dall'utente islab (owner del database IMDB)
+CREATE USER admin with password 'my_admin';
+GRANT SELECT, INSERT ON imdb.movie TO admin;
+CREATE USER operator with password 'my_operator';
+GRANT SELECT ON imdb.* TO operator; 
+GRANT SELECT ON ALL TABLES IN SCHEMA imdb TO operator; 
+
+
+-- ulteriori concessioni di privilegi
+GRANT SELECT, INSERT ON imdb.movie TO jep WITH GRANT OPTION;
+
+
+-- l'utente jep può eseguire il seguente comando:
+GRANT INSERT ON imdb.movie TO db_user; 
+
+-- l'utente db_user NON può eseguire il seguente comando perchè non ha la GRANT OPTION
+GRANT INSERT ON imdb.movie TO db_admin; 
+
+
+-- ogni database postgres possiede un catalogo di sistema che si chiama information_schema 
+-- information_schema contiene tabelle che svolgono il compito di SYSAUTH e SYSCOLAUTH
+
+revoke select on imdb.movie from my_user_imdb cascade;
+
+
+-- creare una vista per visualizzare id, titolo delle pellicole del 2010
+
+create view imdb.movies_2010 as (
+select id, official_title 
+from imdb.movie
+where year = '2010');
+
+-- in postgres, un utente può usare i propri privilegi su uno schema quando ha il privilegio USAGE su quello schema
+GRANT USAGE on schema imdb to islab;
+grant select on imdb.movies_2010 to islab;
+
+
+-- esempio con revoca ricorsiva
+utente bianchi: GRANT select on impiegato to verdi WITH GRANT OPTION;
+utente bianchi: GRANT select on impiegato to gialli WITH GRANT OPTION;
+utente verdi: GRANT select on impiegato to rossi;
+utente gialli: GRANT select on impiegato to rossi;
+
+utente verdi: REVOKE select on impiegato FROM rossi;
+
