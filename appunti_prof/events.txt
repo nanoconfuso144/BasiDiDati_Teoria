@@ -1,0 +1,8 @@
+Si crei una base di dati EVENTS per la gestione di eventi.
+ 
+La base di dati dovrà memorizzare:
+- dati relativi a clienti distinti in persone fisiche e giuridiche
+- dati relativi agli eventi organizzati, tra i quali si distinguono banchetti e convegni
+- dati relativi ai partecipanti agli eventi con eventuali intolleranze (si tenga presente che non è possibile inserire dati anagrafici dei partecipanti se non il nome e il cognome). Si memorizzino gli accompagnatori (il partecipante A può essere accompagnato da B e C) sapendo che un partecipante può avere più accompagnatori, ma può accompagnare solo un partecipante.
+- dati relativi ai ristoranti che gestiscono i banchetti. Tra i ristoranti si distinguono quelli caratteristici
+- dati relativi ai menu serviti ai banchetti. Un menu è un insieme di portate classificate come antipasto, primo, secondo, dessert. Tra le portate si distinguono le specialità che possono essere offerte solo in ristoranti caratteristici. Il costo di un menu è la somma dei costi delle portate incluse nel menu

@@ -1,0 +1,184 @@
+Si consideri R1
+R1 (person, first_name, last_name, given_name, movie, title, year, character)
+
+anomalie: ridondanza dei valori (first_name, last_name, given_name, title, year)
+aggiornamento dati non agevole (aggiornamenti error prone)
+senza conoscere altre tabelle, gli id delle tuple sono inutili (person, movie)
+
+chiave?
+assumendo che una persona non possa partecipare alla stessa pellicola con personaggi diversi:
+person, movie
+
+
+dipendenze funzionali:
+person -> given_name
+person -> first_name
+person -> last_name
+movie -> title
+movie -> year
+person, movie -> character
+
+dipendenza derivante dalla chiave:
+person, movie -> first_name, last_name, given_name, title, year, character
+
+Decomposizione di R in BCNF
+RA (person, first_name, last_name, given_name)
+RB (movie, title, year)
+RC (person, movie, character)
+
+
+
+regola riflessiva
+person, given_name -> given_name
+
+regola arricchimento
+movie -> title ----> movie, year -> title, year
+
+regola unione
+movie -> title
+movie -> year
+
+movie -> title, year
+
+
+--
+R2 (person, movie, country)
+R2 descrive le participazioni degli attori ai film. Country è la sede della produzione del film ed è anche il paese di residenza della person durante le riprese
+
+person -> country
+movie -> country
+
+chiave? person, movie
+
+Forma normale BCNF?
+
+RA (person, country)
+RB (movie, country)
+
+RA inner join RB on RA.country = RB.country
+
+introduce tuple spurie -> join con perdita
+
+RA
+Christian Bale    GBR
+Marion Cotillard  USA
+Leonardo DiCaprio USA
+
+RB
+The Machinist  GBR
+Inception      USA
+The dark Kn..  USA
+The great G..  USA
+
+Per evitare i join con perdita 
+R2 = R21 u R22
+R0 = R21 ∩ R22
+
+La decomposizione di R2 in R21 e R22 è senza perdita se R0 è non vuoto e R0 è chiave in R21 o R22
+
+RA (person, movie)
+RB (movie, country)
+
+perdo la dipendenza funzionale person -> country
+
+RA (person, movie)
+RB (movie, country)
+RC (person, country)
+
+
+consideriamo R3
+R3 (country_title, movie, country)
+R3 descrive il titolo di distribuzione delle pellicole nei vari paesi
+
+chiave? movie, country
+
+movie country -> country_title	
+country_title -> movie
+
+RA (movie, country)
+RB (country_title, movie)
+
+
+R4 (person, movie, birthdate)
+R4 descrive un attore in relazione ai film in cui recita e la sua data di nascita
+
+person -> birthdate
+
+chiave? person, movie
+
+E' in BCNF? No 
+E' in 3FN? No
+
+Decomposizione:
+RA (person, birthdate)
+RB (person, movie)
+
+
+Consideriamo R1
+R1 (person, first_name, last_name, given_name, movie, title, year, character)
+
+
+dipendenze funzionali:
+person -> given_name
+person -> first_name
+person -> last_name
+movie -> title
+movie -> year
+person, movie -> character
+
+chiave: person, movie
+
+La relazione R1 non è in 2NF. Decompongo:
+RA (person, movie, character)
+RB (movie, title, year)
+RC (person, given_name, first_name, last_name)
+
+
+R(A, B, C, D)
+persona(nome, cognome, data_nascita, età)
+
+C -> D
+AB -> C
+
+chiave: AB
+
+RA(A, B, C)
+RB (C, D)
+
+-- la seguente decomposizione non conserva la dipendenza C -> D
+RA (A, B, C) -- chiave: AB
+RB (A, B, D) -- chiave: AB
+
+
+-- 
+R (squadra, allenatore, città, giocatore)
+
+un allenatore allena una e una sola squadra
+la squadra appartiene a una e una sola città
+giocatore appartiene a una squadra
+la squadra contiene numerosi giocatori
+
+squadra -> allenatore
+giocatore -> squadra
+squadra -> città
+
+
+chiave? giocatore
+
+2NF- ok
+3NF- no
+
+soluzione 1 - BCNF
+RA (giocatore, squadra)
+RB (squadra, allenatore)
+RC (squadra, città)
+
+
+soluzione 2 - BCNF
+RX (giocatore, squadra)
+RY (squadra, allenatore, città)
+
+
+
+
+

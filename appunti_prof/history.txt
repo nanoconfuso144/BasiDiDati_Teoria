@@ -1,0 +1,9 @@
+Si crei una base di dati HISTORY per memorizzare eventi e personaggi storici.
+
+I personaggi sono caratterizzati da un nome e una professione tra le quali sappiamo esistere "politico" e "militare". Nel caso dei politici sappiamo che essi afferiscono a un partito. Nei caso dei militari sappiamo che possiedono un grado (e.g., tenente, colonnello, generale). Non necessariamente, politici e militari sono professioni disgiunte: un politico può essere un militare e viceversa.
+
+I personaggi prendono parte a eventi storici. Gli eventi hanno una descrizione e avvengono in una data o in un intervallo di date. Gli eventi possono essere fra loro collegati da relazioni di causa/effetto. 
+
+Gli eventi avvengono in un preciso luogo che può essere una città o una nazione. Una città appartiene a una nazione per uno specifico intervallo di tempo. E' possibile che una città appartenga a nazioni diverse in intervalli di tempo distinti.
+
+Dei personaggi possiamo memorizzare le città in cui sono nati/deceduti e la relativa data.
