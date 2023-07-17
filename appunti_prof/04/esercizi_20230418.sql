@@ -157,7 +157,8 @@ where m.year = msub.year
 
      ( \pi_{movie,country} (released) ) / ( \rho_{country <- iso3} ( \pi_{iso3} (country) ) )
 
-nella divisione la relazione A è definita su un insieme di attributi R che sono un sottoinsieme proprio degli attributi S su cui è definita la relazione B
+nella divisione la relazione A è definita su un insieme di attributi R che sono un sottoinsieme proprio degli 
+attributi S su cui è definita la relazione B
 Il risultato delle divisione è definito sugli attributi di R-S
 A(R)
 B(S)
